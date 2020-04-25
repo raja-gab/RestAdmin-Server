@@ -122,11 +122,11 @@ public interface CrudRestAdmin {
 	public Optional<VenteFlash> findVentFlashById(@PathVariable("id") String id);
 	
 	@PostMapping("/venteflash")
-	public Marque addVenteFlash(VenteFlash venteFlash);
+	public VenteFlash addVenteFlash(VenteFlash venteFlash);
 	
 	@DeleteMapping("/venteflash/{id}")
 	public void deleteVenteFlashById(@PathVariable("id") String id);
 	
 	@PutMapping("/venteflash/{id}")
-	public Marque modifyVenteFlash(VenteFlash venteFlash ,@PathVariable("id") String id);
+	public VenteFlash modifyVenteFlash(VenteFlash venteFlash ,@PathVariable("id") String id);
 }
