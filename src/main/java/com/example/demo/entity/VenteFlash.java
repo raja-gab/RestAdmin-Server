@@ -16,6 +16,6 @@ public class VenteFlash {
 	private LocalDateTime dateDebVF;
 	private LocalDateTime dateFinVF;
 	
-//	private List<ArticleVenteFlash> articleVenteFlash;
+	private List<ArticleVenteFlash> articleVenteFlash;
 	
 }

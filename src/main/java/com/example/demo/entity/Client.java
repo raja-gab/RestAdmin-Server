@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Client {
 
-	private String login; 
+	private String username; 
 	private String password ; 
 	private String nom;
 	private String prenom;

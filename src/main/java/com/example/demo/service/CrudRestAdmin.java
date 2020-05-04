@@ -61,6 +61,9 @@ public interface CrudRestAdmin {
 	@GetMapping("/article")
 	public Resources<Article> getAllArticle();
 	
+	@PutMapping("/article")
+	public Article putArticle(Article article);
+	
 	//  Categorie Feign
 	
 	@GetMapping("/categorie")

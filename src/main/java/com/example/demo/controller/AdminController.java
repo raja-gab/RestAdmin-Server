@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -7,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resources;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.entity.Article;
+import com.example.demo.entity.ArticleVenteFlash;
 import com.example.demo.entity.Categorie;
 import com.example.demo.entity.Client;
 import com.example.demo.entity.Fournisseur;
@@ -51,13 +55,13 @@ public class AdminController {
 		return fournisseur;	
 	}
 	
-	@DeleteMapping("/deleteFou/{login}")
+	@DeleteMapping("/fournisseur/{login}")
 	public void deleteFou(@PathVariable("login") String login) {
 		
 		service.deleteByLogin(login);
 	}
 	
-	@PutMapping("/modifyFour/{login}")
+	@PutMapping("/fournisseur/{login}")
 	public Fournisseur modifyFour(@RequestBody Fournisseur fournisseur , @PathVariable("login") String login) {
 		
 		Optional<Fournisseur> f = service.findByLogin(login);
@@ -86,13 +90,13 @@ public class AdminController {
 	public Resources<Client> getAllClient(){
 		return service.getAllClient();
 	}
-	@PostMapping("/addClient")
+	@PostMapping("/client")
 	public Client addClient(@RequestBody Client client) {
 
 		Client cl = new Client();
 		cl.setAdresseCli(client.getAdresseCli());
 		cl.setCinCli(client.getCinCli());
-		cl.setLogin(client.getLogin());
+		cl.setUsername(client.getUsername());
 		cl.setNom(client.getNom());
 		cl.setNumTelCli(client.getNumTelCli());
 		cl.setPassword(client.getPassword());
@@ -102,20 +106,20 @@ public class AdminController {
 		return cl;
 	}
 
-	@DeleteMapping("/deleteCl/{login}")
+	@DeleteMapping("/client/{login}")
 	public void deleteCl(@PathVariable("login") String login) {
 		
 		service.deleteByLoginCl(login);
 	}
 	
-	@PutMapping("/modifyCl/{login}")
+	@PutMapping("/client/{login}")
 	public Client modifyCl(@RequestBody Client client , @PathVariable("login") String login) {
 		
 		Optional<Client> c = service.findByLoginCl(login);
 		Client cl = new Client();
 		cl.setAdresseCli(client.getAdresseCli());
 		cl.setCinCli(client.getCinCli());
-		cl.setLogin(client.getLogin());
+		cl.setUsername(client.getUsername());
 		cl.setNom(client.getNom());
 		cl.setNumTelCli(client.getNumTelCli());
 		cl.setPassword(client.getPassword());
@@ -158,8 +162,8 @@ public class AdminController {
 	public Resources<SousCategorie> getAllSousCategoreis(){
 		return service.findAllSousCategoreis();
 	}
-	@GetMapping("/categorie/{idCat}")
-	public Categorie findCategoreisById(@PathVariable("idCat") String id) {
+	@GetMapping("/categorie/{id}")
+	public Categorie findCategoreisById(@PathVariable("id") String id) {
 		return service.findCategoreisById(id);
 	}
 	
@@ -195,7 +199,10 @@ public class AdminController {
 		service.modifySousCategorie(s, id);
 		return s ;
 	}
-	
+	@GetMapping("/souscategorie/{id}")
+	public Optional<SousCategorie> getSouscategorieById(@PathVariable("id") String id ){
+		return service.findSousCategoreisById(id);
+	}
 	// Gestion Marque
 	
 	@GetMapping("/marque")
@@ -231,7 +238,7 @@ public class AdminController {
 		return service.findAllventeflash();
 	}
 	
-	@PostMapping("/postventeflash")
+	@PostMapping("/venteflash")
 	public VenteFlash addVenteFlash( @RequestBody VenteFlash venteFlash) {
 		service.addVenteFlash(venteFlash);
 		
@@ -240,7 +247,21 @@ public class AdminController {
 	
 	@DeleteMapping("/venteflash/{id}")
 	public void deleteVenteFlashById(@PathVariable("id") String id) {
+		VenteFlash v1 = service.findVentFlashById(id).orElse(null);
+		System.err.println(v1 );
+		LocalDateTime l1 = LocalDateTime.now();
+		if (l1.isAfter(v1.getDateFinVF())) {
+			System.err.println("*****************************************");
+			List<ArticleVenteFlash> listArticle = v1.getArticleVenteFlash();
+			for (ArticleVenteFlash a : listArticle) {
+				int artQteRetour = a.getQteStockArt() + a.getQteStockArtVF();
+				a.setQteStockArt(artQteRetour);
+			Article a1 =	service.putArticle(a);
+				System.out.println(a1.getQteStockArt()+ "qte");
+			}
+			System.out.println("********************************************");
 		service.deleteVenteFlashById(id);
+		}
 	}
 	
 	@PutMapping("/venteflash/{id}")
