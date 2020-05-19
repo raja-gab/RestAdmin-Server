@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Fournisseur {
+	private String id;		
+	private String mat;
 	private String username;
 	private String address; 
 	private String	phoneNumber;
@@ -15,5 +17,8 @@ public class Fournisseur {
 	private String nom;
 	private String prenom;
 	private String role;
+	public String getId( ) {
+		return this.mat;
+	}
 
 }

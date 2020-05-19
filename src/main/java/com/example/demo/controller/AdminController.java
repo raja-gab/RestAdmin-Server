@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resources;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -28,6 +29,7 @@ import com.example.demo.service.CrudRestAdmin;
 
 
 @RestController
+
 public class AdminController {
 	
 	@Autowired
@@ -40,10 +42,17 @@ public class AdminController {
 	public Resources<Fournisseur> getAllFour(){
 		return service.getAllFour();
 	}
+	
+	@GetMapping("/fournisseur/{id}")
+	public Optional<Fournisseur> findFourById(@PathVariable("id") String id) {
+		return service.findFourById(id);
+	}
 	@PostMapping("/fournisseur")
 	public Fournisseur addFour(@RequestBody Fournisseur fournisseur) {
 
 		Fournisseur four = new Fournisseur();
+		four.setId(fournisseur.getId());
+		four.setMat(fournisseur.getMat());
 		four.setAddress(fournisseur.getAddress());
 		four.setNom(fournisseur.getNom());
 		four.setPhoneNumber(fournisseur.getPhoneNumber());
@@ -61,19 +70,21 @@ public class AdminController {
 		service.deleteByLogin(login);
 	}
 	
-	@PutMapping("/fournisseur/{login}")
-	public Fournisseur modifyFour(@RequestBody Fournisseur fournisseur , @PathVariable("login") String login) {
+	@PutMapping("/fournisseur/{id}")
+	public Fournisseur modifyFour(@RequestBody Fournisseur fournisseur , @PathVariable("id") String id) {
 		
-		Optional<Fournisseur> f = service.findByLogin(login);
+		Optional<Fournisseur> f = service.findFourById(id);
 		Fournisseur four = new Fournisseur();
 		four.setAddress(fournisseur.getAddress());
+		four.setId(fournisseur.getId());
+		four.setMat(fournisseur.getMat());
 		four.setUsername(fournisseur.getUsername());
 		four.setNom(fournisseur.getNom());
 		four.setPhoneNumber(fournisseur.getPhoneNumber());
 		four.setPassword(fournisseur.getPassword());
 		four.setPrenom(fournisseur.getPrenom());
 		four.setRole(fournisseur.getRole());
-		service.modifyFour(four , login);
+		service.modifyFour(four , id);
 		return four;	
 	}
 	
@@ -90,15 +101,26 @@ public class AdminController {
 	public Resources<Client> getAllClient(){
 		return service.getAllClient();
 	}
+	@GetMapping("/listClient")
+	public List<Client> findAllClient(){
+		return service.findAllClient();
+	}
+	@GetMapping("/client/{id}")
+	public Optional<Client> findClientById(@PathVariable("id") String id) {
+		return service.findClientById(id);
+	}
+	
 	@PostMapping("/client")
 	public Client addClient(@RequestBody Client client) {
 
 		Client cl = new Client();
-		cl.setAdresseCli(client.getAdresseCli());
-		cl.setCinCli(client.getCinCli());
+		cl.setId(client.getId());
+		cl.setMat(client.getMat());
+		cl.setAddress(client.getAddress());
+		cl.setCin(client.getCin());
 		cl.setUsername(client.getUsername());
 		cl.setNom(client.getNom());
-		cl.setNumTelCli(client.getNumTelCli());
+		cl.setPhoneNumber(client.getPhoneNumber());
 		cl.setPassword(client.getPassword());
 		cl.setPrenom(client.getPrenom());
 		cl.setRole(client.getRole());
@@ -106,26 +128,28 @@ public class AdminController {
 		return cl;
 	}
 
-	@DeleteMapping("/client/{login}")
-	public void deleteCl(@PathVariable("login") String login) {
+	@DeleteMapping("/client/{Id}")
+	public void deleteCl(@PathVariable("Id") String Id) {
 		
-		service.deleteByLoginCl(login);
+		service.deleteByIdCl(Id);
 	}
 	
-	@PutMapping("/client/{login}")
-	public Client modifyCl(@RequestBody Client client , @PathVariable("login") String login) {
+	@PutMapping("/client/{id}")
+	public Client modifyCl(@RequestBody Client client , @PathVariable("id") String id) {
 		
-		Optional<Client> c = service.findByLoginCl(login);
+		Optional<Client> c = service.findClientById(id);
 		Client cl = new Client();
-		cl.setAdresseCli(client.getAdresseCli());
-		cl.setCinCli(client.getCinCli());
+		cl.setMat(client.getMat());
+		cl.setId(client.getId());
+		cl.setAddress(client.getAddress());
+		cl.setCin(client.getCin());
 		cl.setUsername(client.getUsername());
 		cl.setNom(client.getNom());
-		cl.setNumTelCli(client.getNumTelCli());
+		cl.setPhoneNumber(client.getPhoneNumber());
 		cl.setPassword(client.getPassword());
 		cl.setPrenom(client.getPrenom());
 		cl.setRole(client.getRole());
-		service.modifyCl(cl, login);
+		service.modifyCl(cl, id);
 		return cl;
 	}
 	
@@ -140,6 +164,7 @@ public class AdminController {
 	public Categorie addCategorie(@RequestBody Categorie categorie) {
 		Categorie c = new Categorie();
 		c.setIdCat(categorie.getIdCat());
+		c.setMat(categorie.getMat());
 		c.setLibelleCat(categorie.getLibelleCat());
 		service.addCategorie(c);
 		return c ;
@@ -164,7 +189,7 @@ public class AdminController {
 	}
 	@GetMapping("/categorie/{id}")
 	public Categorie findCategoreisById(@PathVariable("id") String id) {
-		return service.findCategoreisById(id);
+		return service.findCategoreisById(id).orElse(null);
 	}
 	
 	@PostMapping("/souscategorie") 
@@ -172,9 +197,10 @@ public class AdminController {
 		
 		 SousCategorie sousCat = new SousCategorie();
          sousCat.setIdSousCat(sousCategorie.getIdSousCat());
+         sousCat.setMat(sousCategorie.getMat());
          sousCat.setLibelleSousCat(sousCategorie.getLibelleSousCat());
          sousCat.setValeur(sousCategorie.getValeur());
-         Categorie cat = service.findCategoreisById(sousCategorie.getCategorie().getIdCat());
+         Categorie cat = service.findCategoreisById(sousCategorie.getCategorie().getIdCat()).orElse(null);
          if (cat != null )
          {
              System.err.println(cat);
@@ -193,9 +219,13 @@ public class AdminController {
 	@PutMapping("/souscategorie/{id}")
 	public SousCategorie modifySousCategorie(@RequestBody SousCategorie sousCategorie ,@PathVariable("id") String id) {
 		SousCategorie s = new SousCategorie();
-		s.setCategorie(sousCategorie.getCategorie());
+		
+		 s.setMat(sousCategorie.getMat());
+		 s.setIdSousCat(sousCategorie.getIdSousCat());
 		s.setLibelleSousCat(sousCategorie.getLibelleSousCat());
 		s.setValeur(sousCategorie.getValeur());
+		Categorie c1 = service.findCategoreisById(sousCategorie.getCategorie().getIdCat()).orElse(null);
+		s.setCategorie(c1);
 		service.modifySousCategorie(s, id);
 		return s ;
 	}
@@ -209,11 +239,16 @@ public class AdminController {
 	public Resources<Marque> getAllMarque(){
 		return service.findAllMarque();
 	}
-	
+	@GetMapping("/marque/{id}")
+	public Optional<Marque> findMarqueById(@PathVariable("id") String id){
+		return service.findMarqueById(id);
+	}
 	@PostMapping("/marque")
 	public Marque addMarque( @RequestBody Marque marque) {
 		Marque m = new Marque();
 		m.setLibelleMarq(marque.getLibelleMarq());
+		m.setIdMarq(marque.getIdMarq());
+		m.setMat(marque.getMat());
 		service.addMarque(marque);
 		return m ;
 	}
@@ -227,6 +262,8 @@ public class AdminController {
 	public Marque modifyMarque(@RequestBody Marque marque ,@PathVariable("id") String id) {
 		Marque m = new Marque();
 		m.setLibelleMarq(marque.getLibelleMarq());
+		m.setIdMarq(marque.getIdMarq());
+		m.setMat(marque.getMat());
 		service.modifyMarque(m, id);
 		return m ;
 	}

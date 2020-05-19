@@ -5,13 +5,12 @@ import java.util.Optional;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.hateoas.Resources;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
 import com.example.demo.entity.Article;
 import com.example.demo.entity.Categorie;
 import com.example.demo.entity.Client;
@@ -21,17 +20,19 @@ import com.example.demo.entity.SousCategorie;
 import com.example.demo.entity.VenteFlash;
 
 @FeignClient(name = "CrudApplication" , url = "http://localhost:8011/CrudApplication")
+@CrossOrigin(origins = "http://localhost:4200")
 public interface CrudRestAdmin {
 	// Fournisseur Feign
 	
 	@GetMapping("/fournisseur")
 	public Resources<Fournisseur> getAllFour();
 	
+	
 	@PostMapping("/fournisseur")
 	public Fournisseur addFour(Fournisseur fournisseur);
 	
-	@GetMapping("/fournisseur/{login}")
-	public Optional<Fournisseur> findByLogin(@PathVariable("login") String login);	
+	@GetMapping("/fournisseur/{id}")
+	public Optional<Fournisseur> findFourById(@PathVariable("id") String id);	
 	
 	@DeleteMapping("/fournisseur/{login}")
 	public void deleteByLogin(@PathVariable("login") String login);
@@ -40,21 +41,24 @@ public interface CrudRestAdmin {
 	public Fournisseur modifyFour(Fournisseur fournisseur ,@PathVariable("login") String login);
 	
 	// Client Feign 
+	@GetMapping("/listClient")
+	public List<Client> findAllClient();
 	
-	@GetMapping("/client/{login}")
-	public Optional<Client> findByLoginCl(@PathVariable("login") String login);
 	
 	@GetMapping("/client")
 	public Resources<Client> getAllClient();
 	
+	@GetMapping("/client/{id}")
+	public Optional<Client> findClientById(@PathVariable("id") String id);
+	
 	@PostMapping("/client")
-	public Fournisseur addClient(Client client);
+	public Client addClient(Client client);
 	
-	@DeleteMapping("/client/{login}")
-	public void deleteByLoginCl(@PathVariable("login") String login);
+	@DeleteMapping("/client/{Id}")
+	public void deleteByIdCl(@PathVariable("Id") String Id);
 	
-	@PutMapping("/client/{login}")
-	public Fournisseur modifyCl(Client client ,@PathVariable("login") String login);
+	@PutMapping("/client/{id}")
+	public Client modifyCl(Client client ,@PathVariable("id") String id);
 	
 	// Article Feign
 	
@@ -70,7 +74,7 @@ public interface CrudRestAdmin {
 	public Resources<Categorie> findAllCategoreis();
 	
 	@GetMapping("/categorie/{id}")
-	public Categorie findCategoreisById(@PathVariable("id") String id);
+	public Optional<Categorie> findCategoreisById(@PathVariable("id") String id);
 	
 	@PostMapping("/categorie")
 	public Categorie addCategorie(Categorie categorie);

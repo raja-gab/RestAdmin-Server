@@ -1,4 +1,4 @@
-package com.example.demo.security;
+	package com.example.demo.security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,7 +17,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	    protected void configure(HttpSecurity http) throws Exception {
 	        http.csrf().disable();
 	        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-	       
+	        
 	        http.authorizeRequests().antMatchers("/categorie/**").hasAuthority("ADMIN");
 	        http.authorizeRequests().antMatchers("/fournisseur/**").hasAuthority("ADMIN");
 	        http.authorizeRequests().antMatchers("/article/**").hasAuthority("ADMIN");

@@ -15,7 +15,10 @@ public class VenteFlash {
 	private String idVF;
 	private LocalDateTime dateDebVF;
 	private LocalDateTime dateFinVF;
-	
+	private String mat;
+	public String getIdVF( ) {
+		return this.mat;
+	}
 	private List<ArticleVenteFlash> articleVenteFlash;
 	
 }
