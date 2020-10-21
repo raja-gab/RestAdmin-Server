@@ -3,10 +3,11 @@ package com.example.demo.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Resources;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.entity.Article;
-import com.example.demo.entity.ArticleVenteFlash;
+
 import com.example.demo.entity.Categorie;
 import com.example.demo.entity.Client;
 import com.example.demo.entity.Fournisseur;
@@ -28,6 +29,7 @@ import com.example.demo.entity.VenteFlash;
 import com.example.demo.service.CrudRestAdmin;
 
 
+
 @RestController
 
 public class AdminController {
@@ -35,11 +37,10 @@ public class AdminController {
 	@Autowired
 	private CrudRestAdmin service;
 	
-	
 	// Gestion de Fournisseur
 	
 	@GetMapping("/fournisseur")
-	public Resources<Fournisseur> getAllFour(){
+	public CollectionModel<Fournisseur> getAllFour(){
 		return service.getAllFour();
 	}
 	
@@ -91,14 +92,14 @@ public class AdminController {
 	// Consulter toutes les articles
 	
 	@GetMapping("/article")
-	public Resources<Article> getAllArticle(){
+	public CollectionModel<Article> getAllArticle(){
 		return service.getAllArticle();
 	}
 	
 	// Gestion des Clients
 	
 	@GetMapping("/client")
-	public Resources<Client> getAllClient(){
+	public CollectionModel<Client> getAllClient(){
 		return service.getAllClient();
 	}
 	@GetMapping("/listClient")
@@ -156,15 +157,15 @@ public class AdminController {
 	// Gestion Categories
 	
 	@GetMapping("/categorie")
-	public Resources<Categorie> getAllCategorie(){
+	public CollectionModel<Categorie> getAllCategorie(){
 		return service.findAllCategoreis();
 	}
 	
 	@PostMapping("/categorie")
 	public Categorie addCategorie(@RequestBody Categorie categorie) {
 		Categorie c = new Categorie();
-		c.setIdCat(categorie.getIdCat());
-		c.setMat(categorie.getMat());
+		c.setMat(UUID.randomUUID().toString().replace("-", ""));
+		c.setIdCat(UUID.randomUUID().toString().replace("-", ""));
 		c.setLibelleCat(categorie.getLibelleCat());
 		service.addCategorie(c);
 		return c ;
@@ -184,7 +185,7 @@ public class AdminController {
 	// Gestion SousCategorie
 	
 	@GetMapping("/souscategorie")
-	public Resources<SousCategorie> getAllSousCategoreis(){
+	public CollectionModel<SousCategorie> getAllSousCategoreis(){
 		return service.findAllSousCategoreis();
 	}
 	@GetMapping("/categorie/{id}")
@@ -196,8 +197,8 @@ public class AdminController {
 	public SousCategorie addSousCategorie(@RequestBody SousCategorie sousCategorie ) {
 		
 		 SousCategorie sousCat = new SousCategorie();
-         sousCat.setIdSousCat(sousCategorie.getIdSousCat());
-         sousCat.setMat(sousCategorie.getMat());
+   
+         sousCat.setMat(UUID.randomUUID().toString().replace("-", ""));
          sousCat.setLibelleSousCat(sousCategorie.getLibelleSousCat());
          sousCat.setValeur(sousCategorie.getValeur());
          Categorie cat = service.findCategoreisById(sousCategorie.getCategorie().getIdCat()).orElse(null);
@@ -236,7 +237,7 @@ public class AdminController {
 	// Gestion Marque
 	
 	@GetMapping("/marque")
-	public Resources<Marque> getAllMarque(){
+	public CollectionModel<Marque> getAllMarque(){
 		return service.findAllMarque();
 	}
 	@GetMapping("/marque/{id}")
@@ -246,10 +247,12 @@ public class AdminController {
 	@PostMapping("/marque")
 	public Marque addMarque( @RequestBody Marque marque) {
 		Marque m = new Marque();
+		m.setMat(UUID.randomUUID().toString().replace("-", ""));
+		
 		m.setLibelleMarq(marque.getLibelleMarq());
-		m.setIdMarq(marque.getIdMarq());
-		m.setMat(marque.getMat());
-		service.addMarque(marque);
+		 
+		
+		service.addMarque(m);
 		return m ;
 	}
 	
@@ -271,35 +274,52 @@ public class AdminController {
 	// Gestion Vente Flash
 	
 	@GetMapping("/venteflash")
-	public Resources<VenteFlash> getAllVenteFlash(){
+	public CollectionModel<VenteFlash> getAllVenteFlash(){
 		return service.findAllventeflash();
 	}
 	
 	@PostMapping("/venteflash")
 	public VenteFlash addVenteFlash( @RequestBody VenteFlash venteFlash) {
-		service.addVenteFlash(venteFlash);
+		VenteFlash v = new VenteFlash();
 		
-		return venteFlash;
+		v.setMat(UUID.randomUUID().toString().replace("-", ""));
+		v.setDateDebVF(venteFlash.getDateDebVF());
+		v.setDateFinVF(venteFlash.getDateFinVF());
+		v.setArticleVenteFlash(venteFlash.getArticleVenteFlash());
+		service.addVenteFlash(v);
+		
+		return v;
 	}
 	
-	@DeleteMapping("/venteflash/{id}")
-	public void deleteVenteFlashById(@PathVariable("id") String id) {
-		VenteFlash v1 = service.findVentFlashById(id).orElse(null);
+	@Scheduled(fixedDelay = 3600000)
+	@DeleteMapping("/venteflash")
+	public void deleteVenteFlashById() {
+		CollectionModel<VenteFlash> v1 = service.findAllventeflash();
+		
 		System.err.println(v1 );
 		LocalDateTime l1 = LocalDateTime.now();
-		if (l1.isAfter(v1.getDateFinVF())) {
-			System.err.println("*****************************************");
-			List<ArticleVenteFlash> listArticle = v1.getArticleVenteFlash();
-			for (ArticleVenteFlash a : listArticle) {
-				int artQteRetour = a.getQteStockArt() + a.getQteStockArtVF();
-				a.setQteStockArt(artQteRetour);
-			Article a1 =	service.putArticle(a);
-				System.out.println(a1.getQteStockArt()+ "qte");
+		for (VenteFlash v : v1) {
+	 		System.err.println("heloo");
+			if (l1.isAfter(v.getDateFinVF())) {
+				System.err.println(l1);
+				System.err.println(v.getDateFinVF());
+				List<Article> article = v.getArticleVenteFlash();
+				System.err.println("heloo2");
+				if(article != null) {
+				for (Article a : article) {
+					System.err.println("heloo3");
+					a.setQteStockArt(a.getQteStockArt() + a.getQteStockArtVF());
+					a.setQteStockArtVF(0);
+				}
+				service.deleteAllVF();
+				}
 			}
-			System.out.println("********************************************");
-		service.deleteVenteFlashById(id);
 		}
+		 
+		
 	}
+	
+	
 	
 	@PutMapping("/venteflash/{id}")
 	public VenteFlash modifyVenteFlash(@RequestBody VenteFlash venteFlash ,@PathVariable("id") String id) {

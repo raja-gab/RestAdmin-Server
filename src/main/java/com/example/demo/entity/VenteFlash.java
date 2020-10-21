@@ -12,13 +12,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class VenteFlash {
 
-	private String idVF;
+	private String id;
 	private LocalDateTime dateDebVF;
 	private LocalDateTime dateFinVF;
 	private String mat;
-	public String getIdVF( ) {
+	public String getId() {
 		return this.mat;
 	}
-	private List<ArticleVenteFlash> articleVenteFlash;
+	private List<Article> articleVenteFlash;
+	
+	
 	
 }

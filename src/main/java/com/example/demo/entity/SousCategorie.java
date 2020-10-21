@@ -19,6 +19,7 @@ public class SousCategorie {
 	
 	private Categorie categorie;
 	
+	 
 	public String getIdSousCat( ) {
 		return this.mat;
 	}

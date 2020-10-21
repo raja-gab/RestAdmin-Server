@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.hateoas.Resources;
+import org.springframework.hateoas.CollectionModel;
+
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -20,12 +22,12 @@ import com.example.demo.entity.SousCategorie;
 import com.example.demo.entity.VenteFlash;
 
 @FeignClient(name = "CrudApplication" , url = "http://localhost:8011/CrudApplication")
-@CrossOrigin(origins = "http://localhost:4200")
+
 public interface CrudRestAdmin {
 	// Fournisseur Feign
 	
 	@GetMapping("/fournisseur")
-	public Resources<Fournisseur> getAllFour();
+	public CollectionModel<Fournisseur> getAllFour();
 	
 	
 	@PostMapping("/fournisseur")
@@ -46,7 +48,7 @@ public interface CrudRestAdmin {
 	
 	
 	@GetMapping("/client")
-	public Resources<Client> getAllClient();
+	public CollectionModel<Client> getAllClient();
 	
 	@GetMapping("/client/{id}")
 	public Optional<Client> findClientById(@PathVariable("id") String id);
@@ -63,15 +65,15 @@ public interface CrudRestAdmin {
 	// Article Feign
 	
 	@GetMapping("/article")
-	public Resources<Article> getAllArticle();
+	public CollectionModel<Article> getAllArticle();
 	
-	@PutMapping("/article")
-	public Article putArticle(Article article);
+	@PutMapping("/article/{id}")
+	public Article putArticle(Article article , @PathVariable("id") String id);
 	
 	//  Categorie Feign
 	
 	@GetMapping("/categorie")
-	public Resources<Categorie> findAllCategoreis();
+	public CollectionModel<Categorie> findAllCategoreis();
 	
 	@GetMapping("/categorie/{id}")
 	public Optional<Categorie> findCategoreisById(@PathVariable("id") String id);
@@ -88,7 +90,7 @@ public interface CrudRestAdmin {
 	// Sous Categories Feign
 	
 	@GetMapping("/souscategorie")
-	public Resources<SousCategorie> findAllSousCategoreis();
+	public CollectionModel<SousCategorie> findAllSousCategoreis();
 	
 	@GetMapping("/souscategorie/{id}")
 	public Optional<SousCategorie> findSousCategoreisById(@PathVariable("id") String id);
@@ -105,7 +107,7 @@ public interface CrudRestAdmin {
 	// Marque Feign
 	
 	@GetMapping("/marque")
-	public Resources<Marque> findAllMarque();
+	public CollectionModel<Marque> findAllMarque();
 	
 	@GetMapping("/marque/{id}")
 	public Optional<Marque> findMarqueById(@PathVariable("id") String id);
@@ -122,7 +124,7 @@ public interface CrudRestAdmin {
 	// vente Flash Feign
 	
 	@GetMapping("/venteflash")
-	public Resources<VenteFlash> findAllventeflash();
+	public CollectionModel<VenteFlash> findAllventeflash();
 	
 	
 	@GetMapping("/venteflash/{id}")
@@ -136,4 +138,7 @@ public interface CrudRestAdmin {
 	
 	@PutMapping("/venteflash/{id}")
 	public VenteFlash modifyVenteFlash(VenteFlash venteFlash ,@PathVariable("id") String id);
+	
+	@DeleteMapping("/deleteAll")
+	public void deleteAllVF();
 }
